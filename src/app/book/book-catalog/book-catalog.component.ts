@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
 })
 export class BookCatalogComponent implements OnInit, OnDestroy {
   books: Book[] = [];
-  private bookSubscription: Subscription;
+  private bookFindAllApi$: Subscription;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -26,10 +26,10 @@ export class BookCatalogComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.bookSubscription?.unsubscribe();
+    this.bookFindAllApi$?.unsubscribe();
   }
 
-  onNavigateToAddBook(): void {
+  onNavigateToCreateBookView(): void {
     this.router.navigate(['create'], { relativeTo: this.activatedRoute });
   }
 
@@ -38,7 +38,7 @@ export class BookCatalogComponent implements OnInit, OnDestroy {
   }
 
   private requestForBooks(): void {
-    this.bookSubscription = this.bookService
+    this.bookFindAllApi$ = this.bookService
       .findAll()
       .subscribe(books => {
         this.books = books;

@@ -14,14 +14,15 @@ import { Book } from '../book';
 })
 export class BookDetailComponent implements OnInit, OnDestroy {
   bookForm: FormGroup;
-  bookOnCreate$: Subscription;
-  bookOnFindById$: Subscription;
   isEditFlowActive = false;
-  currentBookIdOnEdit: string;
+  private bookCreateApi$: Subscription;
+  private bookFindByIdApi$: Subscription;
+  private bookUpdateApi$: Subscription;
+  private currentBookIdOnEdit: string;
 
   constructor(
-    private bookService: BookService,
     private activatedRoute: ActivatedRoute,
+    private bookService: BookService,
     private router: Router,
     private snackBar: MatSnackBar
   ) {
@@ -32,7 +33,7 @@ export class BookDetailComponent implements OnInit, OnDestroy {
     if (idFromUrlParam) {
       this.isEditFlowActive = true;
       this.currentBookIdOnEdit = idFromUrlParam;
-      this.requestFindBookById(idFromUrlParam);
+      this.requestFindByIdAPI(idFromUrlParam);
     } else {
       this.bookForm.get('posterImgPath').setValue(this.getRamdomImage());
     }
@@ -42,18 +43,20 @@ export class BookDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.bookOnCreate$?.unsubscribe();
+    this.bookFindByIdApi$?.unsubscribe();
+    this.bookUpdateApi$?.unsubscribe();
+    this.bookCreateApi$?.unsubscribe();
   }
 
-  onNavigateToCatalog() {
+  onNavigateToCatalog(): void {
     this.router.navigate(['..']);
   }
 
-  onFormSubmit() {
+  onFormSubmit(): void {
     if (this.isEditFlowActive) {
-      this.requestUpdateBook(this.currentBookIdOnEdit, this.bookForm.value);
+      this.requestUpdateAPI(this.currentBookIdOnEdit, this.bookForm.value);
     } else {
-      this.requestCreateBook(this.bookForm.value);
+      this.requestCreateAPI(this.bookForm.value);
     }
   }
 
@@ -67,29 +70,25 @@ export class BookDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  private setFormBuilderValues(book: Book): void {
-    const { author, description, favorite, posterImgPath, title } = book;
-    this.bookForm.patchValue({ author, description, favorite, posterImgPath, title });
-  }
-
-  private requestFindBookById(id: string): void {
-    this.bookOnFindById$ = this.bookService
+  private requestFindByIdAPI(id: string): void {
+    this.bookFindByIdApi$ = this.bookService
       .findById(id)
-      .subscribe((book) => {
-        this.setFormBuilderValues(book);
+      .subscribe((bookFinded) => {
+        const { author, description, favorite, posterImgPath, title } = bookFinded;
+        this.bookForm.patchValue({ author, description, favorite, posterImgPath, title });
       });
   }
 
-  private requestCreateBook(book: Omit<Book, '_id'>) {
-    this.bookOnCreate$ = this.bookService
+  private requestCreateAPI(book: Omit<Book, '_id'>): void {
+    this.bookCreateApi$ = this.bookService
       .create(book)
       .subscribe((newBook) => {
         this.snackBar.open('Book created!', null, { duration: 2000 });
       });
   }
 
-  private requestUpdateBook(id: string, book: Omit<Book, '_id'>): void {
-    this.bookOnFindById$ = this.bookService
+  private requestUpdateAPI(id: string, book: Omit<Book, '_id'>): void {
+    this.bookUpdateApi$ = this.bookService
       .update(id, book)
       .subscribe((updatedBook) => {
         this.snackBar.open('Book updated!', null, { duration: 2000 });

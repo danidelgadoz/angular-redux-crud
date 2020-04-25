@@ -14,11 +14,11 @@ import { BookService } from '../book.service';
 export class BookCardComponent implements OnInit, OnDestroy {
   @Input() book: Book;
   @Output() deleted = new EventEmitter<string>();
-  private partialUpdate$: Subscription;
-  private deleteBookApi$: Subscription;
+  private bookPartialUpdateApi$: Subscription;
+  private bookDeleteApi$: Subscription;
 
   constructor(
-    private route: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private bookService: BookService,
     private router: Router,
     private snackBar: MatSnackBar
@@ -28,14 +28,14 @@ export class BookCardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.partialUpdate$?.unsubscribe();
-    this.deleteBookApi$?.unsubscribe();
+    this.bookPartialUpdateApi$?.unsubscribe();
+    this.bookDeleteApi$?.unsubscribe();
   }
 
-  onUpdateFavoriteState(): void {
+  onChangeFavoriteState(): void {
     const updatedBook = { ...this.book, favorite: !this.book.favorite };
 
-    this.partialUpdate$ = this.bookService
+    this.bookPartialUpdateApi$ = this.bookService
       .partialUpdate(this.book._id, updatedBook)
       .subscribe(({ favorite }) => {
         this.book = {...this.book, favorite };
@@ -43,7 +43,7 @@ export class BookCardComponent implements OnInit, OnDestroy {
   }
 
   onClickRemoveBook(id: string): void {
-    this.deleteBookApi$ = this.bookService
+    this.bookDeleteApi$ = this.bookService
       .delete(id)
       .subscribe(() => {
         this.deleted.emit(id); // to refresh list on catalog
@@ -52,7 +52,7 @@ export class BookCardComponent implements OnInit, OnDestroy {
   }
 
   onBookDetailNavigate(book: Book): void {
-    this.router.navigate([book._id], { relativeTo: this.route });
+    this.router.navigate([book._id], { relativeTo: this.activatedRoute });
   }
 
 }
