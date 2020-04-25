@@ -1,12 +1,11 @@
 <div fxLayout="row wrap" fxLayoutAlign="center">
-  <app-book-card fxFlex.xs="80" fxFlex.sm="40" fxFlex="25"></app-book-card>
-  <app-book-card fxFlex.xs="80" fxFlex.sm="40" fxFlex="25"></app-book-card>
-  <app-book-card fxFlex.xs="80" fxFlex.sm="40" fxFlex="25"></app-book-card>
-  <app-book-card fxFlex.xs="80" fxFlex.sm="40" fxFlex="25"></app-book-card>
-  <app-book-card fxFlex.xs="80" fxFlex.sm="40" fxFlex="25"></app-book-card>
-  <app-book-card fxFlex.xs="80" fxFlex.sm="40" fxFlex="25"></app-book-card>
-  <app-book-card fxFlex.xs="80" fxFlex.sm="40" fxFlex="25"></app-book-card>
-  <app-book-card fxFlex.xs="80" fxFlex.sm="40" fxFlex="25"></app-book-card>
+  <app-book-card
+    fxFlex.xs="80"
+    fxFlex.sm="40"
+    fxFlex="25"
+    *ngFor="let bookItem of books"
+    [book]="bookItem"
+  ></app-book-card>
 </div>
 
 <button
