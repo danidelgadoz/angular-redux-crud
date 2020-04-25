@@ -33,6 +33,10 @@ export class BookCatalogComponent implements OnInit, OnDestroy {
     this.router.navigate(['create'], { relativeTo: this.activatedRoute });
   }
 
+  onRefreshList(idBookDeleted: string): void {
+    this.books = [...this.books].filter(book => (book._id !== idBookDeleted));
+  }
+
   private requestForBooks(): void {
     this.bookSubscription = this.bookService
       .findAll()

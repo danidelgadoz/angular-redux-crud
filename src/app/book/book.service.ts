@@ -52,4 +52,12 @@ export class BookService {
         catchError((err, caught) => EMPTY)
       );
   }
+
+  delete(id: string): Observable<any> {
+    return this.http.delete(`${environment.api}/books/${id}`)
+      .pipe(
+        map((response) => response),
+        catchError((err, caught) => EMPTY)
+      );
+  }
 }

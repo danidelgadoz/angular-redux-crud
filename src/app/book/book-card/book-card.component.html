@@ -9,7 +9,7 @@
     </button>
     <mat-menu #appMenu="matMenu">
       <button mat-menu-item (click)="onBookDetailNavigate(book)">Edit</button>
-      <button mat-menu-item>Remove</button>
+      <button mat-menu-item (click)="onClickRemoveBook(book._id)">Remove</button>
     </mat-menu>
   </mat-card-header>
 
