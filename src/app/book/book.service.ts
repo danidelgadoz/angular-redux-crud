@@ -29,8 +29,16 @@ export class BookService {
       );
   }
 
-  create(book: Omit<Book, '_id'>) {
-    return this.http.post(`${environment.api}/books`, book)
+  create(book: Omit<Book, '_id'>): Observable<Book> {
+    return this.http.post<Book>(`${environment.api}/books`, book)
+      .pipe(
+        map((response: any) => response),
+        catchError((err, caught) => EMPTY)
+      );
+  }
+
+  update(id: string, book: Omit<Book, '_id'>): Observable<Book> {
+    return this.http.put<Book>(`${environment.api}/books/${id}`, book)
       .pipe(
         map((response: any) => response),
         catchError((err, caught) => EMPTY)

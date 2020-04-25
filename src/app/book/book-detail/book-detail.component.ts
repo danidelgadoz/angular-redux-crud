@@ -51,10 +51,9 @@ export class BookDetailComponent implements OnInit, OnDestroy {
 
   onFormSubmit() {
     if (this.isEditFlowActive) {
-      console.log('onFormSubmit::UPDATE');
+      this.requestUpdateBook(this.currentBookIdOnEdit, this.bookForm.value);
     } else {
-      console.log('onFormSubmit::CREATE');
-      this.requestCreate(this.bookForm.value);
+      this.requestCreateBook(this.bookForm.value);
     }
   }
 
@@ -81,11 +80,19 @@ export class BookDetailComponent implements OnInit, OnDestroy {
       });
   }
 
-  private requestCreate(book: Omit<Book, '_id'>) {
+  private requestCreateBook(book: Omit<Book, '_id'>) {
     this.bookOnCreate$ = this.bookService
       .create(book)
       .subscribe((newBook) => {
         this.snackBar.open('Book created!', null, { duration: 2000 });
+      });
+  }
+
+  private requestUpdateBook(id: string, book: Omit<Book, '_id'>): void {
+    this.bookOnFindById$ = this.bookService
+      .update(id, book)
+      .subscribe((updatedBook) => {
+        this.snackBar.open('Book updated!', null, { duration: 2000 });
       });
   }
 
