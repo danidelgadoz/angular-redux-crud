@@ -20,4 +20,12 @@ export class BookService {
         catchError((err, caught) => EMPTY)
       );
   }
+
+  partialUpdate(id: string, book: Partial<Book>): Observable<Book> {
+    return this.http.patch<Book>(`${environment.api}/books/${id}`, book)
+      .pipe(
+        map((response: any) => response),
+        catchError((err, caught) => EMPTY)
+      );
+  }
 }

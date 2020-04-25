@@ -23,7 +23,10 @@
   <mat-card-actions fxLayout="row" fxLayoutAlign="space-between">
     <button mat-button>COMMENT</button>
 
-    <button mat-icon-button [color]="book?.favorite ? 'warn' : null">
+    <button
+      mat-icon-button
+      [color]="book?.favorite ? 'warn' : null"
+      (click)="onUpdateFavoriteState()">
       <mat-icon>favorite</mat-icon>
     </button>
   </mat-card-actions>
