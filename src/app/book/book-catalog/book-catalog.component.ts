@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { BookService } from '../book.service';
 import { Book } from '../book';
@@ -15,6 +15,7 @@ export class BookCatalogComponent implements OnInit, OnDestroy {
   private bookSubscription: Subscription;
 
   constructor(
+    private activatedRoute: ActivatedRoute,
     private bookService: BookService,
     private router: Router
   ) {
@@ -29,7 +30,7 @@ export class BookCatalogComponent implements OnInit, OnDestroy {
   }
 
   onNavigateToAddBook(): void {
-    this.router.navigate(['book', 'new']);
+    this.router.navigate(['create'], { relativeTo: this.activatedRoute });
   }
 
   private requestForBooks(): void {

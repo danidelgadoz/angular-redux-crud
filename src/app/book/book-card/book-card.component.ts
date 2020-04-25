@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { Book } from '../book';
 import { BookService } from '../book.service';
@@ -15,6 +15,7 @@ export class BookCardComponent implements OnInit, OnDestroy {
   private partialUpdate$: Subscription;
 
   constructor(
+    private route: ActivatedRoute,
     private bookService: BookService,
     private router: Router,
   ) { }
@@ -37,7 +38,7 @@ export class BookCardComponent implements OnInit, OnDestroy {
   }
 
   onBookDetailNavigate(book: Book): void {
-    this.router.navigate(['book', book._id]);
+    this.router.navigate([book._id], { relativeTo: this.route });
   }
 
 }

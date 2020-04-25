@@ -7,17 +7,27 @@ import { BookCatalogComponent } from './book-catalog/book-catalog.component';
 export const BookRoutes: Routes = [
   {
     path: '',
-    redirectTo: 'books',
+    redirectTo: 'book',
     pathMatch: 'full'
   },
   {
-    path: 'books',
-    component: BookCatalogComponent
-  },
-  {
-    path: 'book/:id',
-    component: BookDetailComponent
-  },
+    path: 'book',
+    children: [
+      {
+        path: '',
+        component: BookCatalogComponent
+      },
+      {
+        path: 'create',
+        component: BookDetailComponent
+      },
+      {
+        path: ':id',
+        component: BookDetailComponent
+      },
+    ]
+  }
+
 ];
 
 @NgModule({
