@@ -21,6 +21,14 @@ export class BookService {
       );
   }
 
+  findById(id: string): Observable<Book> {
+    return this.http.get<Book>(`${environment.api}/books/${id}`)
+      .pipe(
+        map((data) => data),
+        catchError((err, caught) => EMPTY)
+      );
+  }
+
   create(book: Omit<Book, '_id'>) {
     return this.http.post(`${environment.api}/books`, book)
       .pipe(

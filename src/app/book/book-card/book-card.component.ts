@@ -36,8 +36,8 @@ export class BookCardComponent implements OnInit, OnDestroy {
       });
   }
 
-  onBookDetailNavigate(book: any): void {
-    this.router.navigate(['book', 1]);
+  onBookDetailNavigate(book: Book): void {
+    this.router.navigate(['book', book._id]);
   }
 
 }

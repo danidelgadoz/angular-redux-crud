@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
 
 import { BookService } from '../book.service';
+import { Book } from '../book';
 
 @Component({
   selector: 'app-book-detail',
@@ -14,14 +15,22 @@ import { BookService } from '../book.service';
 export class BookDetailComponent implements OnInit, OnDestroy {
   bookForm: FormGroup;
   bookOnCreate$: Subscription;
+  bookOnFindById$: Subscription;
 
   constructor(
     private bookService: BookService,
+    private activatedRoute: ActivatedRoute,
     private router: Router,
     private snackBar: MatSnackBar
   ) {
     this.bookForm = this.initFormBuilder();
-    this.bookForm.get('posterImgPath').setValue(this.getRamdomImage());
+
+    const idFromUrlParam: string = this.activatedRoute.snapshot.params.id;
+    if (idFromUrlParam) {
+      this.requestFindBookById(idFromUrlParam);
+    } else {
+      this.bookForm.get('posterImgPath').setValue(this.getRamdomImage());
+    }
   }
 
   ngOnInit(): void {
@@ -51,6 +60,19 @@ export class BookDetailComponent implements OnInit, OnDestroy {
       posterImgPath: new FormControl({ value: '', disabled: false }, [Validators.required]),
       title: new FormControl({ value: '', disabled: false }, [Validators.required]),
     });
+  }
+
+  private setFormBuilderValues(book: Book): void {
+    const { author, description, favorite, posterImgPath, title } = book;
+    this.bookForm.patchValue({ author, description, favorite, posterImgPath, title });
+  }
+
+  private requestFindBookById(id: string): void {
+    this.bookOnFindById$ = this.bookService
+      .findById(id)
+      .subscribe((book) => {
+        this.setFormBuilderValues(book);
+      });
   }
 
   private getRamdomImage(): string {
