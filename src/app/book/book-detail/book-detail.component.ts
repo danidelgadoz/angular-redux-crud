@@ -16,6 +16,8 @@ export class BookDetailComponent implements OnInit, OnDestroy {
   bookForm: FormGroup;
   bookOnCreate$: Subscription;
   bookOnFindById$: Subscription;
+  isEditFlowActive = false;
+  currentBookIdOnEdit: string;
 
   constructor(
     private bookService: BookService,
@@ -26,7 +28,10 @@ export class BookDetailComponent implements OnInit, OnDestroy {
     this.bookForm = this.initFormBuilder();
 
     const idFromUrlParam: string = this.activatedRoute.snapshot.params.id;
+
     if (idFromUrlParam) {
+      this.isEditFlowActive = true;
+      this.currentBookIdOnEdit = idFromUrlParam;
       this.requestFindBookById(idFromUrlParam);
     } else {
       this.bookForm.get('posterImgPath').setValue(this.getRamdomImage());
@@ -41,15 +46,16 @@ export class BookDetailComponent implements OnInit, OnDestroy {
   }
 
   onNavigateToCatalog() {
-    this.router.navigate(['books']);
+    this.router.navigate(['..']);
   }
 
   onFormSubmit() {
-    this.bookOnCreate$ = this.bookService
-      .create({...this.bookForm.value})
-      .subscribe((newBook) => {
-        this.snackBar.open('Book created!', null, { duration: 2000 });
-      });
+    if (this.isEditFlowActive) {
+      console.log('onFormSubmit::UPDATE');
+    } else {
+      console.log('onFormSubmit::CREATE');
+      this.requestCreate(this.bookForm.value);
+    }
   }
 
   private initFormBuilder(): FormGroup {
@@ -72,6 +78,14 @@ export class BookDetailComponent implements OnInit, OnDestroy {
       .findById(id)
       .subscribe((book) => {
         this.setFormBuilderValues(book);
+      });
+  }
+
+  private requestCreate(book: Omit<Book, '_id'>) {
+    this.bookOnCreate$ = this.bookService
+      .create(book)
+      .subscribe((newBook) => {
+        this.snackBar.open('Book created!', null, { duration: 2000 });
       });
   }
 

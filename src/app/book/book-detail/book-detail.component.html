@@ -1,4 +1,11 @@
-<h1>Add Book</h1>
+<div fxLayout="row" fxLayoutAlign="space-between">
+  <h1>{{ !!isEditFlowActive ? 'Edit book' : 'Create a book' }}</h1>
+
+  <button mat-button (click)="onNavigateToCatalog()">
+    <mat-icon>arrow_back</mat-icon>
+    GO TO BOOK LIST
+  </button>
+</div>
 
 <div fxLayout="row">
   <form fxFlex [formGroup]="bookForm" (ngSubmit)="bookForm.valid && onFormSubmit()">
@@ -28,8 +35,7 @@
       </div>
 
       <div fxLayoutAlign="end" fxLayoutGap="16px">
-        <button mat-raised-button (click)="onNavigateToCatalog()">CANCEL</button>
-        <button mat-raised-button color="primary">SAVE</button>
+        <button type="submit" mat-raised-button color="primary">SAVE</button>
       </div>
     </fieldset>
   </form>
