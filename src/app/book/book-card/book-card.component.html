@@ -1,0 +1,32 @@
+<mat-card class="example-card">
+  <mat-card-header>
+    <div mat-card-avatar class="example-header-image"
+        [ngStyle]="{ 'background-image': 'url(https://i.picsum.photos/id/536/200/200.jpg)'}"></div>
+    <mat-card-title>Shiba Inu</mat-card-title>
+    <mat-card-subtitle>Dog Breed</mat-card-subtitle>
+    <button mat-icon-button [matMenuTriggerFor]="appMenu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #appMenu="matMenu">
+      <button mat-menu-item (click)="onBookDetailNavigate(null)">Edit</button>
+      <button mat-menu-item>Remove</button>
+    </mat-menu>
+  </mat-card-header>
+
+  <img mat-card-image src="https://i.picsum.photos/id/536/200/200.jpg" alt="Photo of a Shiba Inu">
+  <mat-card-content>
+    <p>
+      The Shiba Inu is thtinct spitz breeds of dog from Japan.
+      A small, agile dog thain, the Shiba Inu was originally
+      bred for hunting.
+    </p>
+  </mat-card-content>
+
+  <mat-card-actions fxLayout="row" fxLayoutAlign="space-between">
+    <button mat-button>COMMENT</button>
+
+    <button mat-icon-button color="warn">
+      <mat-icon>favorite</mat-icon>
+    </button>
+  </mat-card-actions>
+</mat-card>

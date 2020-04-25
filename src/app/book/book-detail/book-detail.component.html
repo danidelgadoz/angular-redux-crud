@@ -1,0 +1,29 @@
+<h1>My Book Detail</h1>
+
+<div fxLayout="row">
+  <form fxFlex>
+    <fieldset>
+      <div fxLayout="column">
+        <mat-form-field appearance="outline">
+          <mat-label>Title</mat-label>
+          <input matInput>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Author</mat-label>
+          <input matInput>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Description</mat-label>
+          <textarea matInput></textarea>
+        </mat-form-field>
+      </div>
+
+      <div fxLayoutAlign="end" fxLayoutGap="16px">
+        <button mat-raised-button (click)="onNavigateToCatalog()">CANCEL</button>
+        <button mat-raised-button color="primary">SAVE</button>
+      </div>
+    </fieldset>
+  </form>
+</div>
