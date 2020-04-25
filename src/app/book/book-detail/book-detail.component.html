@@ -1,23 +1,30 @@
-<h1>My Book Detail</h1>
+<h1>Add Book</h1>
 
 <div fxLayout="row">
-  <form fxFlex>
+  <form fxFlex [formGroup]="bookForm" (ngSubmit)="bookForm.valid && onFormSubmit()">
     <fieldset>
       <div fxLayout="column">
         <mat-form-field appearance="outline">
           <mat-label>Title</mat-label>
-          <input matInput>
+          <input matInput formControlName="title">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Author</mat-label>
-          <input matInput>
+          <input matInput formControlName="author">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Poster Imagen Path</mat-label>
+          <input matInput formControlName="posterImgPath">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Description</mat-label>
-          <textarea matInput></textarea>
+          <textarea matInput formControlName="description"></textarea>
         </mat-form-field>
+
+        <mat-checkbox formControlName="favorite">Favorite</mat-checkbox>
       </div>
 
       <div fxLayoutAlign="end" fxLayoutGap="16px">

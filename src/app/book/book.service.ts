@@ -21,6 +21,14 @@ export class BookService {
       );
   }
 
+  create(book: Omit<Book, '_id'>) {
+    return this.http.post(`${environment.api}/books`, book)
+      .pipe(
+        map((response: any) => response),
+        catchError((err, caught) => EMPTY)
+      );
+  }
+
   partialUpdate(id: string, book: Partial<Book>): Observable<Book> {
     return this.http.patch<Book>(`${environment.api}/books/${id}`, book)
       .pipe(
