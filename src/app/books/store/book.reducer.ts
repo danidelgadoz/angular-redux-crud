@@ -64,6 +64,28 @@ const bookReducer = createReducer(
     error: { ...error },
     loading: false,
   })),
+  // UPDATE
+  on(bookActions.updateBook, (state) => ({
+    ...state,
+    action: bookActions.type.UPDATE_BOOK,
+    loading: true,
+    error: null,
+  })),
+  on(bookActions.updateBookSuccess, (state, { payload }) => {
+    const books = [...state.data];
+    const index = books.findIndex(b => b._id === payload._id);
+    books[index] = payload;
+    return ({
+      ...state,
+      data: books,
+      loading: false,
+    })
+  }),
+  on(bookActions.updateBookFail, (state, { error }) => ({
+    ...state,
+    error: { ...error },
+    loading: false,
+  })),
 );
 
 export function reducer(state: bookState.BooksState, action: Action) {

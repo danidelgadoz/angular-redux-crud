@@ -20,7 +20,6 @@ import { getBookSelected } from '../store/book.selectors';
 export class BookFormComponent implements OnInit, OnDestroy {
   bookForm: FormGroup;
   isEditFlowActive = false;
-  private bookUpdateApi$: Subscription;
   private currentBookIdOnEdit: string;
   private bookStore$: Subscription;
 
@@ -42,11 +41,15 @@ export class BookFormComponent implements OnInit, OnDestroy {
         .pipe(filter(done => done))
         .subscribe(() => this.onCreateSuccess())
     );
+    this.bookStore$.add(
+      this.store.select(bookSelector.isUpdateSuccess)
+        .pipe(filter(done => done))
+        .subscribe(() => this.snackBar.open('Book updated!', 'OK', { duration: 2000 })),
+    );
   }
 
   ngOnDestroy(): void {
     this.bookStore$?.unsubscribe();
-    this.bookUpdateApi$?.unsubscribe();
   }
 
   onNavigateToCatalog(): void {
@@ -55,7 +58,7 @@ export class BookFormComponent implements OnInit, OnDestroy {
 
   onFormSubmit(): void {
     if (this.isEditFlowActive) {
-      this.requestUpdateAPI(this.currentBookIdOnEdit, this.bookForm.value);
+      this.store.dispatch(bookActions.updateBook({ payload: { ...this.bookForm.value, _id: this.currentBookIdOnEdit} }));
     } else {
       this.store.dispatch(bookActions.createBook({ payload: this.bookForm.value }));
     }
@@ -100,14 +103,6 @@ export class BookFormComponent implements OnInit, OnDestroy {
     Object.keys(this.bookForm.controls).forEach(key => {
       this.bookForm.get(key).setErrors(null);
     });
-  }
-
-  private requestUpdateAPI(id: string, book: Omit<Book, '_id'>): void {
-    this.bookUpdateApi$ = this.bookService
-      .update(id, book)
-      .subscribe((updatedBook) => {
-        this.snackBar.open('Book updated!', 'OK', { duration: 2000 });
-      });
   }
 
 }
