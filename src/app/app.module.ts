@@ -7,6 +7,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from './shared/shared.module';
 import { BookModule } from './books/books.module';
 import { AppComponent } from './app.component';
+import { StoreModule } from '@ngrx/store';
+import { counterReducer } from './books/store/book.reducer';
 
 const APP_ROUTES: Routes = [
   { path: '', redirectTo: 'book', pathMatch: 'full' }
@@ -22,7 +24,9 @@ const APP_ROUTES: Routes = [
     HttpClientModule,
     RouterModule.forRoot(APP_ROUTES, { useHash: true }),
     SharedModule,
-    BookModule
+    BookModule,
+    StoreModule.forRoot({ count: counterReducer })
+
   ],
   providers: [],
   bootstrap: [AppComponent]
