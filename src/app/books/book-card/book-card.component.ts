@@ -3,10 +3,11 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 import { Book } from '../book';
-import { BookService } from '../book.service';
 import * as bookActions from '../store/book.actions';
+import * as bookSelector from '../store/book.selectors';
 
 @Component({
   selector: 'app-book-card',
@@ -16,21 +17,27 @@ import * as bookActions from '../store/book.actions';
 export class BookCardComponent implements OnInit, OnDestroy {
   @Input() book: Book;
   @Output() deleted = new EventEmitter<string>();
-  private bookDeleteApi$: Subscription;
+  private bookStore$: Subscription;
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private bookService: BookService,
     private router: Router,
     private snackBar: MatSnackBar,
     private store: Store<{ books }>
-  ) { }
+  ) {
+    this.bookStore$ = new Subscription();
+  }
 
   ngOnInit(): void {
+    this.bookStore$.add(
+      this.store.select(bookSelector.isDeleteSuccess)
+        .pipe(filter(done => !!done))
+        .subscribe(() => this.snackBar.open('Book deleted!', 'OK', { duration: 2000 })),
+    );
   }
 
   ngOnDestroy(): void {
-    this.bookDeleteApi$?.unsubscribe();
+    this.bookStore$?.unsubscribe();
   }
 
   onChangeFavoriteState(): void {
@@ -39,12 +46,7 @@ export class BookCardComponent implements OnInit, OnDestroy {
   }
 
   onClickRemoveBook(id: string): void {
-    this.bookDeleteApi$ = this.bookService
-      .delete(id)
-      .subscribe(() => {
-        this.deleted.emit(id); // to refresh list on catalog
-        this.snackBar.open('Book deleted!', 'OK', { duration: 2000 });
-      });
+    this.store.dispatch(bookActions.deleteBook({ id }));
   }
 
   onBookDetailNavigate(book: Book): void {

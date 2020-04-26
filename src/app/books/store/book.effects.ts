@@ -70,6 +70,18 @@ export class BookEffects {
     )
   );
 
+  deleteBook$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(bookActions.deleteBook),
+      switchMap((action: any) =>
+        this.bookService.delete(action.id).pipe(
+          map(() => bookActions.deleteBookSuccess({ id: action.id })),
+          catchError((error: any) => of(bookActions.deleteBookFail({ error })))
+        )
+      )
+    )
+  );
+
   constructor(
     private actions$: Actions,
     private bookService: BookService

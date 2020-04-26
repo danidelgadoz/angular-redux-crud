@@ -13,6 +13,9 @@ export const getCreatedError = createSelector(getBookState, (state: BooksState) 
 export const isUpdateSuccess = createSelector(getBookState, (state: BooksState) =>
   state.action === bookActions.type.UPDATE_BOOK && !state.loading && !state.error);
 
+export const isDeleteSuccess = createSelector(getBookState, (state: BooksState) =>
+  state.action === bookActions.type.DELETE_BOOK && !state.loading && !state.error);
+
 export const getBookSelected = createSelector(getBookState, (state: BooksState, props) => {
   return state.data.find(book => book._id === props.id);
 });

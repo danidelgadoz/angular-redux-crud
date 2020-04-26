@@ -108,6 +108,23 @@ const bookReducer = createReducer(
     error: { ...error },
     loading: false,
   })),
+  // DELETE
+  on(bookActions.deleteBook, (state) => ({
+    ...state,
+    action: bookActions.type.DELETE_BOOK,
+    loading: true,
+    error: null,
+  })),
+  on(bookActions.deleteBookSuccess, (state, { id }) => ({
+    ...state,
+    data: [...state.data].filter(b => b._id !== id),
+    loading: false,
+  })),
+  on(bookActions.patchBookFail, (state, { error }) => ({
+    ...state,
+    error: { ...error },
+    loading: false,
+  })),
 );
 
 export function reducer(state: bookState.BooksState, action: Action) {
