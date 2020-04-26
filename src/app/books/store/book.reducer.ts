@@ -21,6 +21,32 @@ const bookReducer = createReducer(
     error: { ...error },
     loading: false,
   })),
+  // GetOneByID
+  on(bookActions.loadBookById, (state) => ({
+    ...state,
+    action: bookActions.type.LOAD_BOOK_BY_ID,
+    loading: true,
+    error: null,
+  })),
+  on(bookActions.loadBookByIdSuccess, (state, { payload }) => {
+    const books = [...state.data];
+    const index = books.findIndex(b => b._id === payload._id);
+    if (index === -1) {
+      books.push(payload);
+    } else {
+      books[index] = payload;
+    }
+    return ({
+      ...state,
+      data: books,
+      loading: false,
+    });
+  }),
+  on(bookActions.loadBookByIdFail, (state, { error }) => ({
+    ...state,
+    error: { ...error },
+    loading: false,
+  })),
   // Create
   on(bookActions.createBook, (state) => ({
     ...state,

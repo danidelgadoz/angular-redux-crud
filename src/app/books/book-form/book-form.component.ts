@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -10,6 +10,7 @@ import { BookService } from '../book.service';
 import { Book } from '../book';
 import * as bookActions from '../store/book.actions';
 import * as bookSelector from '../store/book.selectors';
+import { getBookSelected } from '../store/book.selectors';
 
 @Component({
   selector: 'app-book-form',
@@ -20,7 +21,6 @@ export class BookFormComponent implements OnInit, OnDestroy {
   bookForm: FormGroup;
   isEditFlowActive = false;
   private bookUpdateApi$: Subscription;
-  private bookFindByIdApi$: Subscription;
   private currentBookIdOnEdit: string;
   private bookStore$: Subscription;
 
@@ -45,7 +45,6 @@ export class BookFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.bookFindByIdApi$?.unsubscribe();
     this.bookStore$?.unsubscribe();
     this.bookUpdateApi$?.unsubscribe();
   }
@@ -67,7 +66,8 @@ export class BookFormComponent implements OnInit, OnDestroy {
     if (idFromUrlParam) {
       this.isEditFlowActive = true;
       this.currentBookIdOnEdit = idFromUrlParam;
-      this.requestFindByIdAPI(idFromUrlParam);
+      this.store.dispatch(bookActions.loadBookById({ payload: idFromUrlParam }));
+      this.handleBookSelectedChanges(idFromUrlParam);
     } else {
       this.bookForm.get('posterImgPath').setValue(this.bookService.getRamdomPosterImgPath());
     }
@@ -83,13 +83,15 @@ export class BookFormComponent implements OnInit, OnDestroy {
     });
   }
 
-  private requestFindByIdAPI(id: string): void {
-    this.bookFindByIdApi$ = this.bookService
-      .findById(id)
-      .subscribe((bookFinded) => {
-        const { author, description, favorite, posterImgPath, title } = bookFinded;
-        this.bookForm.patchValue({ author, description, favorite, posterImgPath, title });
-      });
+  private handleBookSelectedChanges(id: string): void {
+    this.bookStore$.add(
+      this.store.pipe(select(getBookSelected, { id }))
+        .pipe(filter(book => !!book))
+        .subscribe(bookFinded => {
+          const { author, description, favorite, posterImgPath, title } = bookFinded;
+          this.bookForm.patchValue({ author, description, favorite, posterImgPath, title });
+        })
+    );
   }
 
   private onCreateSuccess(): void {

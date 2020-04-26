@@ -22,6 +22,18 @@ export class BookEffects {
     )
   );
 
+  loadBookById$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(bookActions.loadBookById),
+      switchMap((action: any) =>
+        this.bookService.findById(action.payload).pipe(
+          map((payload: Book) => bookActions.loadBookByIdSuccess({ payload })),
+          catchError((error: any) => of(bookActions.loadBookByIdFail({ error })))
+        )
+      )
+    )
+  );
+
   createBook$ = createEffect(() =>
     this.actions$.pipe(
       ofType(bookActions.createBook),

@@ -9,3 +9,7 @@ export const isCreatedSuccess = createSelector(getBookState, (state: BooksState)
 
 export const getCreatedError = createSelector(getBookState, (state: BooksState) =>
   state.action === bookActions.type.CREATE_BOOK ? state.error : null);
+
+export const getBookSelected = createSelector(getBookState, (state: BooksState, props) => {
+  return state.data.find(book => book._id === props.id);
+});
