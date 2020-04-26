@@ -11,6 +11,7 @@ import { StoreModule } from '@ngrx/store';
 import { counterReducer } from './books/store/book.reducer';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
+import { EffectsModule } from '@ngrx/effects';
 
 const APP_ROUTES: Routes = [
   { path: '', redirectTo: 'book', pathMatch: 'full' }
@@ -28,7 +29,8 @@ const APP_ROUTES: Routes = [
     SharedModule,
     BookModule,
     StoreModule.forRoot({ count: counterReducer }),
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production })
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+    EffectsModule.forRoot([])
 
   ],
   providers: [],
