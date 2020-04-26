@@ -9,6 +9,8 @@ import { BookModule } from './books/books.module';
 import { AppComponent } from './app.component';
 import { StoreModule } from '@ngrx/store';
 import { counterReducer } from './books/store/book.reducer';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from '../environments/environment';
 
 const APP_ROUTES: Routes = [
   { path: '', redirectTo: 'book', pathMatch: 'full' }
@@ -25,7 +27,8 @@ const APP_ROUTES: Routes = [
     RouterModule.forRoot(APP_ROUTES, { useHash: true }),
     SharedModule,
     BookModule,
-    StoreModule.forRoot({ count: counterReducer })
+    StoreModule.forRoot({ count: counterReducer }),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production })
 
   ],
   providers: [],
