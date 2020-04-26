@@ -8,7 +8,6 @@ import { SharedModule } from './shared/shared.module';
 import { BookModule } from './books/books.module';
 import { AppComponent } from './app.component';
 import { StoreModule } from '@ngrx/store';
-import { counterReducer } from './books/store/book.reducer';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { EffectsModule } from '@ngrx/effects';
@@ -25,13 +24,12 @@ const APP_ROUTES: Routes = [
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    RouterModule.forRoot(APP_ROUTES, { useHash: true }),
-    SharedModule,
     BookModule,
-    StoreModule.forRoot({ count: counterReducer }),
+    SharedModule,
+    RouterModule.forRoot(APP_ROUTES, { useHash: true }),
+    EffectsModule.forRoot([]),
+    StoreModule.forRoot({}),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
-    EffectsModule.forRoot([])
-
   ],
   providers: [],
   bootstrap: [AppComponent]

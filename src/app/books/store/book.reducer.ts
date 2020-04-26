@@ -1,14 +1,26 @@
-import { createReducer, on } from '@ngrx/store';
-import { increment, decrement, reset } from './book.actions';
+import { createReducer, on, Action } from '@ngrx/store';
+import * as bookState from './book.state';
+import * as bookActions from './book.actions';
 
-export const initialState = 0;
-
-const _counterReducer = createReducer(initialState,
-  on(increment, state => state + 1),
-  on(decrement, state => state - 1),
-  on(reset, state => 0),
+const bookReducer = createReducer(
+  bookState.initialstate,
+  on(bookActions.loadBooks, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+  on(bookActions.loadBooksSuccess, (state, { data }) => ({
+    ...state,
+    data,
+    loading: false,
+  })),
+  on(bookActions.loadBooksFail, (state, { error }) => ({
+    ...state,
+    error: { ...error },
+    loading: false,
+  })),
 );
 
-export function counterReducer(state, action) {
-  return _counterReducer(state, action);
+export function reducer(state: bookState.BooksState, action: Action) {
+  return bookReducer(state, action);
 }
