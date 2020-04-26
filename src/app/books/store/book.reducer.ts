@@ -4,8 +4,10 @@ import * as bookActions from './book.actions';
 
 const bookReducer = createReducer(
   bookState.initialstate,
+  // GetAll
   on(bookActions.loadBooks, (state) => ({
     ...state,
+    action: bookActions.type.LOAD_BOOKS,
     loading: true,
     error: null,
   })),
@@ -15,6 +17,23 @@ const bookReducer = createReducer(
     loading: false,
   })),
   on(bookActions.loadBooksFail, (state, { error }) => ({
+    ...state,
+    error: { ...error },
+    loading: false,
+  })),
+  // Create
+  on(bookActions.createBook, (state) => ({
+    ...state,
+    action: bookActions.type.CREATE_BOOK,
+    loading: true,
+    error: null,
+  })),
+  on(bookActions.createBookSuccess, (state, { payload }) => ({
+    ...state,
+    data: [...state.data, payload],
+    loading: false,
+  })),
+  on(bookActions.createBookFail, (state, { error }) => ({
     ...state,
     error: { ...error },
     loading: false,

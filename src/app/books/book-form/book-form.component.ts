@@ -1,11 +1,15 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 import { BookService } from '../book.service';
 import { Book } from '../book';
+import * as bookActions from '../store/book.actions';
+import * as bookSelector from '../store/book.selectors';
 
 @Component({
   selector: 'app-book-form',
@@ -15,27 +19,35 @@ import { Book } from '../book';
 export class BookFormComponent implements OnInit, OnDestroy {
   bookForm: FormGroup;
   isEditFlowActive = false;
-  private bookCreateApi$: Subscription;
-  private bookFindByIdApi$: Subscription;
   private bookUpdateApi$: Subscription;
+  private bookFindByIdApi$: Subscription;
   private currentBookIdOnEdit: string;
+  private bookStore$: Subscription;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private bookService: BookService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private store: Store<{ books }>
   ) {
+    this.bookStore$ = new Subscription();
     this.bookForm = this.initFormBuilder();
     this.prepareCreateOrUpdateFlow();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.bookStore$.add(
+      this.store.select(bookSelector.isCreatedSuccess)
+        .pipe(filter(done => done))
+        .subscribe(() => this.onCreateSuccess())
+    );
+  }
 
   ngOnDestroy(): void {
     this.bookFindByIdApi$?.unsubscribe();
+    this.bookStore$?.unsubscribe();
     this.bookUpdateApi$?.unsubscribe();
-    this.bookCreateApi$?.unsubscribe();
   }
 
   onNavigateToCatalog(): void {
@@ -46,7 +58,7 @@ export class BookFormComponent implements OnInit, OnDestroy {
     if (this.isEditFlowActive) {
       this.requestUpdateAPI(this.currentBookIdOnEdit, this.bookForm.value);
     } else {
-      this.requestCreateAPI(this.bookForm.value);
+      this.store.dispatch(bookActions.createBook({ payload: this.bookForm.value }));
     }
   }
 
@@ -80,16 +92,12 @@ export class BookFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  private requestCreateAPI(book: Omit<Book, '_id'>): void {
-    this.bookCreateApi$ = this.bookService
-      .create(book)
-      .subscribe((newBook) => {
-        this.snackBar.open('Book created!', 'OK', { duration: 2000 });
-        this.bookForm.reset();
-        Object.keys(this.bookForm.controls).forEach(key => {
-          this.bookForm.get(key).setErrors(null);
-        });
-      });
+  private onCreateSuccess(): void {
+    this.snackBar.open('Book created!', 'OK', { duration: 2000 });
+    this.bookForm.reset();
+    Object.keys(this.bookForm.controls).forEach(key => {
+      this.bookForm.get(key).setErrors(null);
+    });
   }
 
   private requestUpdateAPI(id: string, book: Omit<Book, '_id'>): void {
