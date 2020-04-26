@@ -58,6 +58,18 @@ export class BookEffects {
     )
   );
 
+  patchBook$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(bookActions.patchBook),
+      switchMap((action: any) =>
+        this.bookService.partialUpdate(action.id, action.payload).pipe(
+          map((payload: Book) => bookActions.patchBookSuccess({ payload })),
+          catchError((error: any) => of(bookActions.patchBookFail({ error })))
+        )
+      )
+    )
+  );
+
   constructor(
     private actions$: Actions,
     private bookService: BookService

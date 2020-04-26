@@ -14,6 +14,9 @@ export enum type {
   UPDATE_BOOK             = '[ Book ] Update Book',
   UPDATE_BOOK_FAIL        = '[ Book ] Update Book Fail',
   UPDATE_BOOK_SUCCESS     = '[ Book ] Update Book Success',
+  PATCH_BOOK              = '[ Book ] Patch Book',
+  PATCH_BOOK_FAIL         = '[ Book ] Patch Book Fail',
+  PATCH_BOOK_SUCCESS      = '[ Book ] Patch Book Success',
 }
 
 export const loadBooks           = createAction(type.LOAD_BOOKS);
@@ -28,3 +31,6 @@ export const createBookSuccess   = createAction(type.CREATE_BOOK_SUCCESS, props<
 export const updateBook          = createAction(type.UPDATE_BOOK, props<{ payload: Book }>());
 export const updateBookFail      = createAction(type.UPDATE_BOOK_FAIL, props<{ error: any }>());
 export const updateBookSuccess   = createAction(type.UPDATE_BOOK_SUCCESS, props<{ payload: Book }>());
+export const patchBook           = createAction(type.PATCH_BOOK, props<{ id: string, payload: Partial<Book> }>());
+export const patchBookFail       = createAction(type.PATCH_BOOK_FAIL, props<{ error: any }>());
+export const patchBookSuccess    = createAction(type.PATCH_BOOK_SUCCESS, props<{ payload: Book }>());
