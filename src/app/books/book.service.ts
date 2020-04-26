@@ -35,4 +35,9 @@ export class BookService {
   delete(id: string): Observable<any> {
     return this.http.delete(`${environment.api}/books/${id}`);
   }
+
+  getRamdomPosterImgPath(): string {
+    const randomIdFrom1To500 = Math.floor((Math.random() * 500) + 1);
+    return `https://i.picsum.photos/id/${randomIdFrom1To500}/200/200.jpg`;
+  }
 }

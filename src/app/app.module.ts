@@ -1,11 +1,16 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-
-import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { BookModule } from './book/book.module';
-import { SharedModule } from './shared/shared.module';
 import { HttpClientModule } from '@angular/common/http';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+
+import { SharedModule } from './shared/shared.module';
+import { BookModule } from './books/books.module';
+import { AppComponent } from './app.component';
+
+const APP_ROUTES: Routes = [
+  { path: '', redirectTo: 'book', pathMatch: 'full' }
+];
 
 @NgModule({
   declarations: [
@@ -15,6 +20,7 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    RouterModule.forRoot(APP_ROUTES, { useHash: true }),
     SharedModule,
     BookModule
   ],

@@ -5,7 +5,7 @@
     fxFlex="25"
     *ngFor="let bookItem of books"
     [book]="bookItem"
-    (deleted)="onRefreshList($event)"
+    (deleted)="onRefreshListWhenDeleteIsSuccess($event)"
   ></app-book-card>
 </div>
 

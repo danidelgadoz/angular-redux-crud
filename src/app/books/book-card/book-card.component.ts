@@ -33,10 +33,10 @@ export class BookCardComponent implements OnInit, OnDestroy {
   }
 
   onChangeFavoriteState(): void {
-    const updatedBook = { ...this.book, favorite: !this.book.favorite };
+    const bookFavoriteState = { favorite: !this.book.favorite };
 
     this.bookPartialUpdateApi$ = this.bookService
-      .partialUpdate(this.book._id, updatedBook)
+      .partialUpdate(this.book._id, bookFavoriteState)
       .subscribe(({ favorite }) => {
         this.book = {...this.book, favorite };
       });
@@ -47,7 +47,7 @@ export class BookCardComponent implements OnInit, OnDestroy {
       .delete(id)
       .subscribe(() => {
         this.deleted.emit(id); // to refresh list on catalog
-        this.snackBar.open('Book deleted!', null, { duration: 2000 });
+        this.snackBar.open('Book deleted!', 'OK', { duration: 2000 });
       });
   }
 

@@ -19,7 +19,7 @@ export class BookCatalogComponent implements OnInit, OnDestroy {
     private bookService: BookService,
     private router: Router
   ) {
-    this.requestForBooks();
+    this.requestFindAllAPI();
   }
 
   ngOnInit(): void {
@@ -33,11 +33,11 @@ export class BookCatalogComponent implements OnInit, OnDestroy {
     this.router.navigate(['create'], { relativeTo: this.activatedRoute });
   }
 
-  onRefreshList(idBookDeleted: string): void {
+  onRefreshListWhenDeleteIsSuccess(idBookDeleted: string): void {
     this.books = [...this.books].filter(book => (book._id !== idBookDeleted));
   }
 
-  private requestForBooks(): void {
+  private requestFindAllAPI(): void {
     this.bookFindAllApi$ = this.bookService
       .findAll()
       .subscribe(books => {

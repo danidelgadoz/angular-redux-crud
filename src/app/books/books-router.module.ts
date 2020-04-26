@@ -1,15 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { BookDetailComponent } from './book-detail/book-detail.component';
+import { BookFormComponent } from './book-form/book-form.component';
 import { BookCatalogComponent } from './book-catalog/book-catalog.component';
 
 export const BookRoutes: Routes = [
-  {
-    path: '',
-    redirectTo: 'book',
-    pathMatch: 'full'
-  },
   {
     path: 'book',
     children: [
@@ -19,11 +14,11 @@ export const BookRoutes: Routes = [
       },
       {
         path: 'create',
-        component: BookDetailComponent
+        component: BookFormComponent
       },
       {
         path: ':id',
-        component: BookDetailComponent
+        component: BookFormComponent
       },
     ]
   }
@@ -31,8 +26,10 @@ export const BookRoutes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(BookRoutes, { useHash: true })],
+  imports: [RouterModule.forChild(BookRoutes)],
   exports: [RouterModule]
 })
 
-export class BookRoutingModule { }
+export class BooksRoutingModule {
+  static components = [ BookFormComponent, BookCatalogComponent];
+}

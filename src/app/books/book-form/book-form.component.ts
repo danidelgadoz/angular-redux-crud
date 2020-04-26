@@ -8,11 +8,11 @@ import { BookService } from '../book.service';
 import { Book } from '../book';
 
 @Component({
-  selector: 'app-book-detail',
-  templateUrl: './book-detail.component.html',
-  styleUrls: ['./book-detail.component.scss']
+  selector: 'app-book-form',
+  templateUrl: './book-form.component.html',
+  styleUrls: ['./book-form.component.scss']
 })
-export class BookDetailComponent implements OnInit, OnDestroy {
+export class BookFormComponent implements OnInit, OnDestroy {
   bookForm: FormGroup;
   isEditFlowActive = false;
   private bookCreateApi$: Subscription;
@@ -27,20 +27,10 @@ export class BookDetailComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar
   ) {
     this.bookForm = this.initFormBuilder();
-
-    const idFromUrlParam: string = this.activatedRoute.snapshot.params.id;
-
-    if (idFromUrlParam) {
-      this.isEditFlowActive = true;
-      this.currentBookIdOnEdit = idFromUrlParam;
-      this.requestFindByIdAPI(idFromUrlParam);
-    } else {
-      this.bookForm.get('posterImgPath').setValue(this.getRamdomImage());
-    }
+    this.prepareCreateOrUpdateFlow();
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.bookFindByIdApi$?.unsubscribe();
@@ -57,6 +47,17 @@ export class BookDetailComponent implements OnInit, OnDestroy {
       this.requestUpdateAPI(this.currentBookIdOnEdit, this.bookForm.value);
     } else {
       this.requestCreateAPI(this.bookForm.value);
+    }
+  }
+
+  private prepareCreateOrUpdateFlow() {
+    const idFromUrlParam: string = this.activatedRoute.snapshot.params.id;
+    if (idFromUrlParam) {
+      this.isEditFlowActive = true;
+      this.currentBookIdOnEdit = idFromUrlParam;
+      this.requestFindByIdAPI(idFromUrlParam);
+    } else {
+      this.bookForm.get('posterImgPath').setValue(this.bookService.getRamdomPosterImgPath());
     }
   }
 
@@ -83,7 +84,11 @@ export class BookDetailComponent implements OnInit, OnDestroy {
     this.bookCreateApi$ = this.bookService
       .create(book)
       .subscribe((newBook) => {
-        this.snackBar.open('Book created!', null, { duration: 2000 });
+        this.snackBar.open('Book created!', 'OK', { duration: 2000 });
+        this.bookForm.reset();
+        Object.keys(this.bookForm.controls).forEach(key => {
+          this.bookForm.get(key).setErrors(null);
+        });
       });
   }
 
@@ -91,13 +96,8 @@ export class BookDetailComponent implements OnInit, OnDestroy {
     this.bookUpdateApi$ = this.bookService
       .update(id, book)
       .subscribe((updatedBook) => {
-        this.snackBar.open('Book updated!', null, { duration: 2000 });
+        this.snackBar.open('Book updated!', 'OK', { duration: 2000 });
       });
-  }
-
-  private getRamdomImage(): string {
-    const randomIdFrom1To500 = Math.floor((Math.random() * 500) + 1);
-    return `https://i.picsum.photos/id/${randomIdFrom1To500}/200/200.jpg`;
   }
 
 }
