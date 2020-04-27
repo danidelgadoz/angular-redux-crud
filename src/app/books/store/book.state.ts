@@ -1,19 +1,25 @@
+import { EntityState, createEntityAdapter } from '@ngrx/entity';
 import { Book } from '../book';
 
-export const featureKey = 'books';
+export const adapter = createEntityAdapter<Book>({
+  selectId: (sensor: Book) => sensor._id,
+  sortComparer: false
+});
 
-export interface BooksState {
+export interface BooksState extends EntityState<Book> {
+  selectedId: string | null;
   action: string;
-  data: Array<Book>;
   loading: boolean;
   loaded: boolean;
   error: any;
 }
 
-export const initialstate: BooksState = {
+export const initialstate: BooksState = adapter.getInitialState({
+  selectedId: null,
   action: null,
-  data: [],
   loading: false,
   loaded: false,
-  error: null,
-};
+  error: null
+});
+
+export const featureKey = 'books';

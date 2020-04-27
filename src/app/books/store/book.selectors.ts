@@ -1,13 +1,24 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { BooksState, featureKey } from './book.state';
+import { BooksState, featureKey, adapter } from './book.state';
 import * as bookActions from './book.actions';
 
-export const getBookState = createFeatureSelector<BooksState>(featureKey);
+const {
+  selectEntities,
+  selectAll
+} = adapter.getSelectors();
 
-export const getAll = createSelector(getBookState, (state: BooksState) => [...state.data]);
+const getBookState = createFeatureSelector<BooksState>(featureKey);
 
-export const getSelected = createSelector(getBookState, (state: BooksState, props: { id: string}) =>
-  ({...state.data.find(book => book._id === props.id)})
+const selectBookEntities = createSelector(getBookState, selectEntities);
+
+const selectBookSensorId = createSelector(getBookState, (state: BooksState) => state.selectedId);
+
+export const selectAllBooks = createSelector(getBookState, selectAll);
+
+export const selectCurrentBook = createSelector(
+  selectBookEntities,
+  selectBookSensorId,
+  (userEntities, userId) => userEntities[userId]
 );
 
 export const isCreateSuccess = createSelector(getBookState, (state: BooksState) =>

@@ -2,6 +2,7 @@ import { createAction, props } from '@ngrx/store';
 import { Book, BookId } from '../book';
 
 export enum type {
+  SELECT_BOOK            = '[ Book ] Select a Book',
   FIND_ALL_BOOKS         = '[ Book ] Find All Books',
   FIND_ALL_BOOKS_FAIL    = '[ Book ] Find All Books Fail',
   FIND_ALL_BOOKS_SUCCESS = '[ Book ] Find All Books Success',
@@ -22,6 +23,7 @@ export enum type {
   DELETE_BOOK_SUCCESS    = '[ Book ] Delete Book Success',
 }
 
+export const SelectBook          = createAction(type.SELECT_BOOK, props<{ id: string }>());
 export const findAllBooks        = createAction(type.FIND_ALL_BOOKS);
 export const findAllBooksFail    = createAction(type.FIND_ALL_BOOKS_FAIL, props<{ error: any }>());
 export const findAllBooksSuccess = createAction(type.FIND_ALL_BOOKS_SUCCESS, props<{ books: Array<Book> }>());

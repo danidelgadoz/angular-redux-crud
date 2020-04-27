@@ -4,6 +4,11 @@ import * as bookActions from './book.actions';
 
 const bookReducer = createReducer(
   bookState.initialstate,
+  // SELECT ONE
+  on(bookActions.SelectBook, (state, { id }) => ({
+    ...state,
+    selectedId: id
+  })),
   // FIND ALL
   on(bookActions.findAllBooks, (state) => ({
     ...state,
@@ -11,11 +16,12 @@ const bookReducer = createReducer(
     loading: true,
     error: null,
   })),
-  on(bookActions.findAllBooksSuccess, (state, { books }) => ({
-    ...state,
-    data: [...books],
-    loading: false,
-  })),
+  on(bookActions.findAllBooksSuccess, (state, { books }) => {
+    return bookState.adapter.addAll(books, {
+      ...state,
+      loading: false,
+    });
+  }),
   on(bookActions.findAllBooksFail, (state, { error }) => ({
     ...state,
     error: {...error},
@@ -29,16 +35,8 @@ const bookReducer = createReducer(
     error: null,
   })),
   on(bookActions.findOneSuccess, (state, { book }) => {
-    const booksOnState = [...state.data];
-    const index = booksOnState.findIndex(b => b._id === book._id);
-    if (index === -1) {
-      booksOnState.push(book);
-    } else {
-      booksOnState[index] = book;
-    }
-    return ({
+    return bookState.adapter.setOne(book, {
       ...state,
-      data: booksOnState,
       loading: false,
     });
   }),
@@ -54,11 +52,12 @@ const bookReducer = createReducer(
     loading: true,
     error: null,
   })),
-  on(bookActions.createBookSuccess, (state, { book }) => ({
-    ...state,
-    data: [...state.data, book],
-    loading: false,
-  })),
+  on(bookActions.createBookSuccess, (state, { book }) => {
+    return bookState.adapter.addOne(book, {
+      ...state,
+      loading: false,
+    });
+  }),
   on(bookActions.createBookFail, (state, { error }) => ({
     ...state,
     error: { ...error },
@@ -72,12 +71,8 @@ const bookReducer = createReducer(
     error: null,
   })),
   on(bookActions.updateBookSuccess, (state, { book }) => {
-    const booksOnState = [...state.data];
-    const index = booksOnState.findIndex(b => b._id === book._id);
-    booksOnState[index] = book;
-    return ({
+    return bookState.adapter.updateOne({ id: book._id, changes: book }, {
       ...state,
-      data: booksOnState,
       loading: false,
     });
   }),
@@ -94,12 +89,8 @@ const bookReducer = createReducer(
     error: null,
   })),
   on(bookActions.patchBookSuccess, (state, { book }) => {
-    const booksOnState = [...state.data];
-    const index = booksOnState.findIndex(b => b._id === book._id);
-    booksOnState[index] = book;
-    return ({
+    return bookState.adapter.updateOne({ id: book._id, changes: book }, {
       ...state,
-      data: booksOnState,
       loading: false,
     });
   }),
@@ -115,11 +106,12 @@ const bookReducer = createReducer(
     loading: true,
     error: null,
   })),
-  on(bookActions.deleteBookSuccess, (state, { id }) => ({
-    ...state,
-    data: [...state.data].filter(b => b._id !== id),
-    loading: false,
-  })),
+  on(bookActions.deleteBookSuccess, (state, { id }) => {
+    return bookState.adapter.removeOne(id, {
+      ...state,
+      loading: false,
+    });
+  }),
   on(bookActions.patchBookFail, (state, { error }) => ({
     ...state,
     error: { ...error },

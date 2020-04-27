@@ -71,6 +71,7 @@ export class BookFormComponent implements OnInit, OnDestroy {
     if (idFromUrlParam) {
       this.isEditFlowActive = true;
       this.currentBookIdOnEdit = idFromUrlParam;
+      this.store.dispatch(bookActions.SelectBook({ id: idFromUrlParam }));
       this.store.dispatch(bookActions.findOneBook({ id: idFromUrlParam }));
       this.handleBookSelectedChanges(idFromUrlParam);
     } else {
@@ -90,7 +91,7 @@ export class BookFormComponent implements OnInit, OnDestroy {
 
   private handleBookSelectedChanges(id: string): void {
     this.bookStore$.add(
-      this.store.pipe(select(bookSelector.getSelected, { id }))
+      this.store.pipe(select(bookSelector.selectCurrentBook))
         .pipe(filter(book => !!book))
         .subscribe(bookSelected => {
           const { author, description, favorite, posterImgPath, title } = bookSelected;

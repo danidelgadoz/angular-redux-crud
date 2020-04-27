@@ -25,7 +25,7 @@ export class BookCatalogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.bookStore$ = this.store.select(bookSelector.getAll)
+    this.bookStore$ = this.store.select(bookSelector.selectAllBooks)
       .subscribe((books) => {
         this.books = [...books];
       });
