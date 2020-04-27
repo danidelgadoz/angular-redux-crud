@@ -1,16 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Store, select } from '@ngrx/store';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { select, Store } from '@ngrx/store';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { BookService } from '../book.service';
-import { Book } from '../book';
 import * as bookActions from '../store/book.actions';
 import * as bookSelector from '../store/book.selectors';
-import { getBookSelected } from '../store/book.selectors';
 
 @Component({
   selector: 'app-book-form',
@@ -28,7 +26,7 @@ export class BookFormComponent implements OnInit, OnDestroy {
     private bookService: BookService,
     private router: Router,
     private snackBar: MatSnackBar,
-    private store: Store<{ books }>
+    private store: Store
   ) {
     this.bookStore$ = new Subscription();
     this.bookForm = this.initFormBuilder();
@@ -37,14 +35,17 @@ export class BookFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.bookStore$.add(
-      this.store.select(bookSelector.isCreatedSuccess)
+      this.store.select(bookSelector.isCreateSuccess)
         .pipe(filter(done => done))
-        .subscribe(() => this.onCreateSuccess())
+        .subscribe(() => {
+          this.resetForm();
+          this.snackBar.open('Book created!', 'OK', { duration: 2000 });
+        })
     );
     this.bookStore$.add(
       this.store.select(bookSelector.isUpdateSuccess)
         .pipe(filter(done => done))
-        .subscribe(() => this.snackBar.open('Book updated!', 'OK', { duration: 2000 })),
+        .subscribe(() => this.snackBar.open('Book updated!', 'OK', { duration: 2000 }))
     );
   }
 
@@ -58,9 +59,10 @@ export class BookFormComponent implements OnInit, OnDestroy {
 
   onFormSubmit(): void {
     if (this.isEditFlowActive) {
-      this.store.dispatch(bookActions.updateBook({ payload: { ...this.bookForm.value, _id: this.currentBookIdOnEdit} }));
+      const bookToUpdate = { ...this.bookForm.value, _id: this.currentBookIdOnEdit};
+      this.store.dispatch(bookActions.updateBook({ book: bookToUpdate }));
     } else {
-      this.store.dispatch(bookActions.createBook({ payload: this.bookForm.value }));
+      this.store.dispatch(bookActions.createBook({ book: this.bookForm.value }));
     }
   }
 
@@ -69,7 +71,7 @@ export class BookFormComponent implements OnInit, OnDestroy {
     if (idFromUrlParam) {
       this.isEditFlowActive = true;
       this.currentBookIdOnEdit = idFromUrlParam;
-      this.store.dispatch(bookActions.loadBookById({ payload: idFromUrlParam }));
+      this.store.dispatch(bookActions.findOneBook({ id: idFromUrlParam }));
       this.handleBookSelectedChanges(idFromUrlParam);
     } else {
       this.bookForm.get('posterImgPath').setValue(this.bookService.getRamdomPosterImgPath());
@@ -88,17 +90,16 @@ export class BookFormComponent implements OnInit, OnDestroy {
 
   private handleBookSelectedChanges(id: string): void {
     this.bookStore$.add(
-      this.store.pipe(select(getBookSelected, { id }))
+      this.store.pipe(select(bookSelector.getSelected, { id }))
         .pipe(filter(book => !!book))
-        .subscribe(bookFinded => {
-          const { author, description, favorite, posterImgPath, title } = bookFinded;
+        .subscribe(bookSelected => {
+          const { author, description, favorite, posterImgPath, title } = bookSelected;
           this.bookForm.patchValue({ author, description, favorite, posterImgPath, title });
         })
     );
   }
 
-  private onCreateSuccess(): void {
-    this.snackBar.open('Book created!', 'OK', { duration: 2000 });
+  private resetForm(): void {
     this.bookForm.reset();
     Object.keys(this.bookForm.controls).forEach(key => {
       this.bookForm.get(key).setErrors(null);

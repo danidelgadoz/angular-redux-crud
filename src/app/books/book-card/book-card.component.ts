@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, EventEmitter, Input, OnInit, OnDestroy, Output } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
@@ -16,14 +16,13 @@ import * as bookSelector from '../store/book.selectors';
 })
 export class BookCardComponent implements OnInit, OnDestroy {
   @Input() book: Book;
-  @Output() deleted = new EventEmitter<string>();
   private bookStore$: Subscription;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private snackBar: MatSnackBar,
-    private store: Store<{ books }>
+    private store: Store
   ) {
     this.bookStore$ = new Subscription();
   }
@@ -41,8 +40,8 @@ export class BookCardComponent implements OnInit, OnDestroy {
   }
 
   onChangeFavoriteState(): void {
-    const bookFavoriteState = { favorite: !this.book.favorite };
-    this.store.dispatch(bookActions.patchBook({ id: this.book._id, payload: bookFavoriteState }));
+    const fieldsToUpdate = { favorite: !this.book.favorite };
+    this.store.dispatch(bookActions.patchBook({ id: this.book._id, book: fieldsToUpdate }));
   }
 
   onClickRemoveBook(id: string): void {

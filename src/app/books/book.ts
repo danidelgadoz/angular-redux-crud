@@ -1,3 +1,5 @@
+export type BookId = '_id';
+
 export interface Book {
   _id: string;
   author: string;

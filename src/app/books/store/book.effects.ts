@@ -1,34 +1,33 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { map, catchError, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
-import { Book } from '../book';
 import { BookService } from '../book.service';
 import * as bookActions from './book.actions';
 
 @Injectable()
 export class BookEffects {
 
-  loadBook$ = createEffect(() =>
+  findAllBook$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(bookActions.loadBooks),
+      ofType(bookActions.findAllBooks),
       switchMap(() =>
         this.bookService.findAll().pipe(
-          map((data: Array<Book>) => bookActions.loadBooksSuccess({ data })),
-          catchError((error: any) => of(bookActions.loadBooksFail({ error })))
+          map((books) => bookActions.findAllBooksSuccess({ books })),
+          catchError((error) => of(bookActions.findAllBooksFail({ error })))
         )
       )
     )
   );
 
-  loadBookById$ = createEffect(() =>
+  findOneById$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(bookActions.loadBookById),
-      switchMap((action: any) =>
-        this.bookService.findById(action.payload).pipe(
-          map((payload: Book) => bookActions.loadBookByIdSuccess({ payload })),
-          catchError((error: any) => of(bookActions.loadBookByIdFail({ error })))
+      ofType(bookActions.findOneBook),
+      switchMap((action) =>
+        this.bookService.findById(action.id).pipe(
+          map((book) => bookActions.findOneSuccess({ book })),
+          catchError((error) => of(bookActions.findOneBookFail({ error })))
         )
       )
     )
@@ -37,10 +36,10 @@ export class BookEffects {
   createBook$ = createEffect(() =>
     this.actions$.pipe(
       ofType(bookActions.createBook),
-      switchMap((action: any) =>
-        this.bookService.create(action.payload).pipe(
-          map((payload: Book) => bookActions.createBookSuccess({ payload })),
-          catchError((error: any) => of(bookActions.createBookFail({ error })))
+      switchMap((action) =>
+        this.bookService.create(action.book).pipe(
+          map((book) => bookActions.createBookSuccess({ book })),
+          catchError((error) => of(bookActions.createBookFail({ error })))
         )
       )
     )
@@ -49,10 +48,10 @@ export class BookEffects {
   updateBook$ = createEffect(() =>
     this.actions$.pipe(
       ofType(bookActions.updateBook),
-      switchMap((action: any) =>
-        this.bookService.update(action.payload._id, action.payload).pipe(
-          map((payload: Book) => bookActions.updateBookSuccess({ payload })),
-          catchError((error: any) => of(bookActions.updateBookFail({ error })))
+      switchMap((action) =>
+        this.bookService.update(action.book).pipe(
+          map((book) => bookActions.updateBookSuccess({ book })),
+          catchError((error) => of(bookActions.updateBookFail({ error })))
         )
       )
     )
@@ -61,10 +60,10 @@ export class BookEffects {
   patchBook$ = createEffect(() =>
     this.actions$.pipe(
       ofType(bookActions.patchBook),
-      switchMap((action: any) =>
-        this.bookService.partialUpdate(action.id, action.payload).pipe(
-          map((payload: Book) => bookActions.patchBookSuccess({ payload })),
-          catchError((error: any) => of(bookActions.patchBookFail({ error })))
+      switchMap((action) =>
+        this.bookService.partialUpdate(action.id, action.book).pipe(
+          map((book) => bookActions.patchBookSuccess({ book })),
+          catchError((error) => of(bookActions.patchBookFail({ error })))
         )
       )
     )
@@ -73,10 +72,10 @@ export class BookEffects {
   deleteBook$ = createEffect(() =>
     this.actions$.pipe(
       ofType(bookActions.deleteBook),
-      switchMap((action: any) =>
+      switchMap((action) =>
         this.bookService.delete(action.id).pipe(
           map(() => bookActions.deleteBookSuccess({ id: action.id })),
-          catchError((error: any) => of(bookActions.deleteBookFail({ error })))
+          catchError((error) => of(bookActions.deleteBookFail({ error })))
         )
       )
     )

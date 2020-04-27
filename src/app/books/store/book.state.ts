@@ -3,7 +3,7 @@ import { Book } from '../book';
 export const featureKey = 'books';
 
 export interface BooksState {
-  action: any;
+  action: string;
   data: Array<Book>;
   loading: boolean;
   loaded: boolean;

@@ -1,11 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Store, select } from '@ngrx/store';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 
 import { Book } from '../book';
-import { loadBooks } from '../store/book.actions';
-import { featureKey } from '../store/book.state';
+import * as bookActions from '../store/book.actions';
+import * as bookSelector from '../store/book.selectors';
 
 @Component({
   selector: 'app-book-catalog',
@@ -21,13 +21,13 @@ export class BookCatalogComponent implements OnInit, OnDestroy {
     private router: Router,
     private store: Store<{ books }>
   ) {
-    this.store.dispatch(loadBooks());
+    this.store.dispatch(bookActions.findAllBooks());
   }
 
   ngOnInit(): void {
-    this.bookStore$ = this.store.pipe(select(featureKey))
-      .subscribe((bookStore) => {
-        this.books = [...bookStore.data];
+    this.bookStore$ = this.store.select(bookSelector.getAll)
+      .subscribe((books) => {
+        this.books = [...books];
       });
   }
 
@@ -37,10 +37,6 @@ export class BookCatalogComponent implements OnInit, OnDestroy {
 
   onNavigateToCreateBookView(): void {
     this.router.navigate(['create'], { relativeTo: this.activatedRoute });
-  }
-
-  onRefreshListWhenDeleteIsSuccess(idBookDeleted: string): void {
-    this.books = [...this.books].filter(book => (book._id !== idBookDeleted));
   }
 
 }

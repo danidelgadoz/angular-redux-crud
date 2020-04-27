@@ -1,62 +1,62 @@
-import { createReducer, on, Action } from '@ngrx/store';
+import { Action, createReducer, on } from '@ngrx/store';
 import * as bookState from './book.state';
 import * as bookActions from './book.actions';
 
 const bookReducer = createReducer(
   bookState.initialstate,
-  // GetAll
-  on(bookActions.loadBooks, (state) => ({
+  // FIND ALL
+  on(bookActions.findAllBooks, (state) => ({
     ...state,
-    action: bookActions.type.LOAD_BOOKS,
+    action: bookActions.type.FIND_ALL_BOOKS,
     loading: true,
     error: null,
   })),
-  on(bookActions.loadBooksSuccess, (state, { data }) => ({
+  on(bookActions.findAllBooksSuccess, (state, { books }) => ({
     ...state,
-    data,
+    data: [...books],
     loading: false,
   })),
-  on(bookActions.loadBooksFail, (state, { error }) => ({
+  on(bookActions.findAllBooksFail, (state, { error }) => ({
     ...state,
-    error: { ...error },
+    error: {...error},
     loading: false,
   })),
-  // GetOneByID
-  on(bookActions.loadBookById, (state) => ({
+  // FIND ONE
+  on(bookActions.findOneBook, (state) => ({
     ...state,
-    action: bookActions.type.LOAD_BOOK_BY_ID,
+    action: bookActions.type.FIND_ONE_BOOK,
     loading: true,
     error: null,
   })),
-  on(bookActions.loadBookByIdSuccess, (state, { payload }) => {
-    const books = [...state.data];
-    const index = books.findIndex(b => b._id === payload._id);
+  on(bookActions.findOneSuccess, (state, { book }) => {
+    const booksOnState = [...state.data];
+    const index = booksOnState.findIndex(b => b._id === book._id);
     if (index === -1) {
-      books.push(payload);
+      booksOnState.push(book);
     } else {
-      books[index] = payload;
+      booksOnState[index] = book;
     }
     return ({
       ...state,
-      data: books,
+      data: booksOnState,
       loading: false,
     });
   }),
-  on(bookActions.loadBookByIdFail, (state, { error }) => ({
+  on(bookActions.findOneBookFail, (state, { error }) => ({
     ...state,
     error: { ...error },
     loading: false,
   })),
-  // Create
+  // CREATE
   on(bookActions.createBook, (state) => ({
     ...state,
     action: bookActions.type.CREATE_BOOK,
     loading: true,
     error: null,
   })),
-  on(bookActions.createBookSuccess, (state, { payload }) => ({
+  on(bookActions.createBookSuccess, (state, { book }) => ({
     ...state,
-    data: [...state.data, payload],
+    data: [...state.data, book],
     loading: false,
   })),
   on(bookActions.createBookFail, (state, { error }) => ({
@@ -71,15 +71,15 @@ const bookReducer = createReducer(
     loading: true,
     error: null,
   })),
-  on(bookActions.updateBookSuccess, (state, { payload }) => {
-    const books = [...state.data];
-    const index = books.findIndex(b => b._id === payload._id);
-    books[index] = payload;
+  on(bookActions.updateBookSuccess, (state, { book }) => {
+    const booksOnState = [...state.data];
+    const index = booksOnState.findIndex(b => b._id === book._id);
+    booksOnState[index] = book;
     return ({
       ...state,
-      data: books,
+      data: booksOnState,
       loading: false,
-    })
+    });
   }),
   on(bookActions.updateBookFail, (state, { error }) => ({
     ...state,
@@ -93,15 +93,15 @@ const bookReducer = createReducer(
     loading: true,
     error: null,
   })),
-  on(bookActions.patchBookSuccess, (state, { payload }) => {
-    const books = [...state.data];
-    const index = books.findIndex(b => b._id === payload._id);
-    books[index] = payload;
+  on(bookActions.patchBookSuccess, (state, { book }) => {
+    const booksOnState = [...state.data];
+    const index = booksOnState.findIndex(b => b._id === book._id);
+    booksOnState[index] = book;
     return ({
       ...state,
-      data: books,
+      data: booksOnState,
       loading: false,
-    })
+    });
   }),
   on(bookActions.patchBookFail, (state, { error }) => ({
     ...state,

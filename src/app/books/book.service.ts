@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { Book } from './book';
+import { Book, BookId } from './book';
 
 @Injectable({
   providedIn: 'root'
@@ -20,16 +20,18 @@ export class BookService {
     return this.http.get<Book>(`${environment.api}/books/${id}`);
   }
 
-  create(book: Omit<Book, '_id'>): Observable<Book> {
+  create(book: Omit<Book, BookId>): Observable<Book> {
     return this.http.post<Book>(`${environment.api}/books`, book);
   }
 
-  update(id: string, book: Omit<Book, '_id'>): Observable<Book> {
-    return this.http.put<Book>(`${environment.api}/books/${id}`, book);
+  update(book: Book): Observable<Book> {
+    const { _id, ...fieldsToUpdate } = book;
+    return this.http.put<Book>(`${environment.api}/books/${_id}`, fieldsToUpdate);
   }
 
   partialUpdate(id: string, book: Partial<Book>): Observable<Book> {
-    return this.http.patch<Book>(`${environment.api}/books/${id}`, book);
+    const { _id, ...fieldsToUpdate } = book;
+    return this.http.patch<Book>(`${environment.api}/books/${id}`, fieldsToUpdate);
   }
 
   delete(id: string): Observable<any> {
