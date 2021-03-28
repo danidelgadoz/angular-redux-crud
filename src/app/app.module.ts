@@ -26,7 +26,7 @@ const APP_ROUTES: Routes = [
     HttpClientModule,
     BookModule,
     SharedModule,
-    RouterModule.forRoot(APP_ROUTES, { useHash: true }),
+    RouterModule.forRoot(APP_ROUTES, { useHash: true, relativeLinkResolution: 'legacy' }),
     EffectsModule.forRoot([]),
     StoreModule.forRoot({}),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
