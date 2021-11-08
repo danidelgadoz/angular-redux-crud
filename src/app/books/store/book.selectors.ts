@@ -18,7 +18,7 @@ export const selectAllBooks = createSelector(getBookState, selectAll);
 export const selectCurrentBook = createSelector(
   selectBookEntities,
   selectBookSensorId,
-  (userEntities, userId) => userEntities[userId]
+  (userEntities, userId) => userId && userEntities[userId]
 );
 
 export const isCreateSuccess = createSelector(getBookState, (state: BooksState) =>

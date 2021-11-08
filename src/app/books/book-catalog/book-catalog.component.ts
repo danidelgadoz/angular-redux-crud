@@ -14,12 +14,12 @@ import * as bookSelector from '../store/book.selectors';
 })
 export class BookCatalogComponent implements OnInit, OnDestroy {
   books: Book[] = [];
-  private bookStore$: Subscription;
+  private bookStore$!: Subscription;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private store: Store<{ books }>
+    private store: Store<{ books: any }>
   ) {
     this.store.dispatch(bookActions.findAllBooks());
   }

@@ -18,7 +18,7 @@ import * as bookSelector from '../store/book.selectors';
 export class BookFormComponent implements OnInit, OnDestroy {
   bookForm: FormGroup;
   isEditFlowActive = false;
-  private currentBookIdOnEdit: string;
+  private currentBookIdOnEdit!: string;
   private bookStore$: Subscription;
 
   constructor(
@@ -67,7 +67,7 @@ export class BookFormComponent implements OnInit, OnDestroy {
   }
 
   private prepareCreateOrUpdateFlow() {
-    const idFromUrlParam: string = this.activatedRoute.snapshot.params.id;
+    const idFromUrlParam: string = this.activatedRoute.snapshot.params['id'];
     if (idFromUrlParam) {
       this.isEditFlowActive = true;
       this.currentBookIdOnEdit = idFromUrlParam;
@@ -75,7 +75,7 @@ export class BookFormComponent implements OnInit, OnDestroy {
       this.store.dispatch(bookActions.findOneBook({ id: idFromUrlParam }));
       this.handleBookSelectedChanges(idFromUrlParam);
     } else {
-      this.bookForm.get('posterImgPath').setValue(this.bookService.getRamdomPosterImgPath());
+      this.bookForm.get('posterImgPath')?.setValue(this.bookService.getRamdomPosterImgPath());
     }
   }
 
@@ -92,10 +92,11 @@ export class BookFormComponent implements OnInit, OnDestroy {
   private handleBookSelectedChanges(id: string): void {
     this.bookStore$.add(
       this.store.pipe(select(bookSelector.selectCurrentBook))
-        .pipe(filter(book => !!book))
         .subscribe(bookSelected => {
-          const { author, description, favorite, posterImgPath, title } = bookSelected;
-          this.bookForm.patchValue({ author, description, favorite, posterImgPath, title });
+          if (!!bookSelected) {
+            const { author, description, favorite, posterImgPath, title } = bookSelected;
+            this.bookForm.patchValue({ author, description, favorite, posterImgPath, title });
+          }
         })
     );
   }
@@ -103,7 +104,7 @@ export class BookFormComponent implements OnInit, OnDestroy {
   private resetForm(): void {
     this.bookForm.reset();
     Object.keys(this.bookForm.controls).forEach(key => {
-      this.bookForm.get(key).setErrors(null);
+      this.bookForm.get(key)?.setErrors(null);
     });
   }
 

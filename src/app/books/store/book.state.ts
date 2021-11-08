@@ -8,7 +8,7 @@ export const adapter = createEntityAdapter<Book>({
 
 export interface BooksState extends EntityState<Book> {
   selectedId: string | null;
-  action: string;
+  action: string | null;
   loading: boolean;
   loaded: boolean;
   error: any;

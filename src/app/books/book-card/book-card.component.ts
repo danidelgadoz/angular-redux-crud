@@ -15,7 +15,7 @@ import * as bookSelector from '../store/book.selectors';
   styleUrls: ['./book-card.component.scss']
 })
 export class BookCardComponent implements OnInit, OnDestroy {
-  @Input() book: Book;
+  @Input() book!: Book;
   private bookStore$: Subscription;
 
   constructor(

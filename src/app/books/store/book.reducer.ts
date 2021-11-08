@@ -17,7 +17,7 @@ const bookReducer = createReducer(
     error: null,
   })),
   on(bookActions.findAllBooksSuccess, (state, { books }) => {
-    return bookState.adapter.addAll(books, {
+    return bookState.adapter.addMany(books, {
       ...state,
       loading: false,
     });
